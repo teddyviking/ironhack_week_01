@@ -2,19 +2,32 @@ require 'pry'
 
 class Blog
 	attr_accessor :posts
+	attr_reader :current_page, :total_pages
+
 	def initialize
 		@posts = []
+		@current_page = 0
 	end
+
 	def create_front_page(posts)
 		sort_posts(posts)
+		i = 0
+		page = []
 		posts.each do |post|
-			@posts << post
+			page << post
+			i += 1
+			if i % 3 == 0
+				@posts << page
+				page = []
+			elsif post == posts.last
+				@posts << page		
+			end
 		end
 	end
 
 	def publish_front_page(*posts)
 		create_front_page(posts)
-		@posts.each do |post|
+		@posts[@current_page].each do |post|	
 			if post.sponsor
 				puts '******' + post.title + '******'
 			else
@@ -24,7 +37,20 @@ class Blog
 			puts post.text
 			puts '--------------------'
 		end
+		pages = @posts.map{|page| @posts.index(page) + 1}.join(' ')
+		puts "Pages: #{pages}"
 	end
+
+	def advance_page
+		@current_page += 1
+	end 
+
+	def drop_page
+		@current_page -= 1
+	end
+
+
+	private
 
 	def sort_posts(posts)
 		posts.sort!{|post1, post2| post2.date <=> post1.date}
@@ -45,15 +71,21 @@ end
 blog = Blog.new
 
 post1 = Post.new
-post1.title = "Hello World!"
+post1.title = "1. Hello World!"
 post1.text = "Because everything is wonderful"
 post1.sponsor = true
 post2 = Post.new
-post2.title = "Goodbye World!"
+post2.title = "2. Goodbye World!"
 post2.text = "I don't love you any more"
+post3 = Post.new
+post3.title = "3"
+post3.text = "It's the third post"
+post4 = Post.new
+post4.title = "4"
+post4.text = "I'm not creating more posts"
 
 
-blog.publish_front_page(post1, post2)
+blog.publish_front_page(post1, post2, post3, post4)
 binding.pry
 
 
