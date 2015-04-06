@@ -6,7 +6,10 @@ class Blog
 		@posts = []
 	end
 	def create_front_page(posts)
-		posts.each {|post| @posts << post}
+		sort_posts(posts)
+		posts.each do |post|
+			@posts << post
+		end
 	end
 
 	def publish_front_page(*posts)
@@ -17,6 +20,10 @@ class Blog
 			puts post.text
 			puts '--------------------'
 		end
+	end
+
+	def sort_posts(posts)
+		posts.sort!{|post1, post2| post2.date <=> post1.date}
 	end
 
 end
