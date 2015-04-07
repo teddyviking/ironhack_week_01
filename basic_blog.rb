@@ -42,10 +42,12 @@ class Blog
 
 	def advance_page
 		@current_page_number += 1
+		publish_front_page(@pages[@current_page_number])
 	end 
 
 	def drop_page
 		@current_page_number -= 1
+		publish_front_page(@pages[@current_page_number])
 	end
 
 
@@ -114,6 +116,8 @@ post4.text = "I'm not creating more posts"
 
 
 blog = Blog.new(post1, post2, post3, post4)
+
+puts "\n\n\nI want a new page! \n\n\n\n\n"
 blog.advance_page
 
 
