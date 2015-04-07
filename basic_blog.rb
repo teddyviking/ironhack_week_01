@@ -3,7 +3,7 @@ require 'colorize'
 
 class Blog
 	attr_accessor :posts
-	attr_reader :current_page_number
+	attr_reader :current_page_number, :pages
 
 	def initialize(*posts)
 		@posts = posts
@@ -14,47 +14,6 @@ class Blog
 		create_pages(posts)
 		publish_front_page(@pages[@current_page_number])
 	end
-
-
-	def publish_front_page(page)
-		page.each{|post| give_format(post)}
-		add_numeration
-		ask_user_for_action
-	end
-
-	def add_numeration
-		index_of_pages = []
-		@pages.each_index{|i| index_of_pages << (i + 1) }
-		# p index_of_pages
-		colorize_current_page(index_of_pages)
-		puts "Pages: " + index_of_pages.join(' ')
-	end
-
-	def colorize_current_page(index_of_pages)
-		index_of_pages.map! do |page_number|
-			page_number = page_number.to_s
-			if page_number  == (@current_page_number + 1).to_s
-				page_number = page_number.colorize(:blue)
-			else
-				page_number
-			end
-		end
-	end
-
-	def ask_user_for_action
-		user_input = get_user_input
-		if user_input == "next" && @current_page_number != @pages.index(@pages.last)
-			advance_page
-		elsif user_input == "prev" && @current_page_number != @pages.index(@pages.first)
-			drop_page
-		end
-	end
-
-	def get_user_input
-		puts "What do you want to do? (NEXT, PREV, EXIT)"
-		user_input = gets.chomp.downcase
-	end
-
 
 	def advance_page
 		@current_page_number += 1
@@ -99,6 +58,30 @@ class Blog
 		puts post.text
 		puts '--------------------'
 	end
+
+	def publish_front_page(page)
+		page.each{|post| give_format(post)}
+		add_numeration
+	end
+
+	def add_numeration
+		index_of_pages = []
+		@pages.each_index{|i| index_of_pages << (i + 1) }
+		# p index_of_pages
+		colorize_current_page(index_of_pages)
+		puts "Pages: " + index_of_pages.join(' ')
+	end
+
+	def colorize_current_page(index_of_pages)
+		index_of_pages.map! do |page_number|
+			page_number = page_number.to_s
+			if page_number  == (@current_page_number + 1).to_s
+				page_number = page_number.colorize(:blue)
+			else
+				page_number
+			end
+		end
+	end
 end
 
 
@@ -134,18 +117,21 @@ post4.text = "I'm not creating more posts"
 
 
 blog = Blog.new(post1, post2, post3, post4)
+user_input = "next"
+until user_input != ("next"||"prev"||"exit")
+	puts "\n\n\nWhat do you want to do? \n (NEXT, PREV, EXIT) \n\n\n\n\n".colorize(:red)
+	user_input = gets.chomp.downcase
+	if user_input == "next" && blog.current_page_number < blog.pages.index(blog.pages.last)
+		blog.advance_page
+	elsif user_input == "prev" && blog.current_page_number > 0
+		blog.drop_page
+	else
+		user_input = "exit"
+	end
+end
 
-# puts "\n\n\nWhat do you want to do? \n (NEXT, PREV, EXIT) \n\n\n\n\n".colorize(:red)
-# user_input = gets.chomp.downcase
-# if user_input == "next" && @current_page_number != @pages.index(@pages.last)
-# 		advance_page
-# 	elsif user_input == "prev" && @current_page_number != @pages.index(@pages.first)
-# 		drop_page
-# 	end
-
-# blog.advance_page
 
 
-puts "THE END"
+puts "Thanks for reading us.\nSee you soon"
 
 
