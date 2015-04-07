@@ -1,9 +1,11 @@
 require 'pry'
 class Game
-	attr_reader :rooms, :character
+	attr_reader :rooms, :character, :reader
+
 
 	def initialize(*rooms)
 		@rooms ={}
+		@allowed_values = %w(N E S W sing)
 
 		rooms.each do |room|
 			@rooms[room.name] = room
@@ -21,17 +23,34 @@ class Game
 	def get_user_input
 		puts "a>"
 		user_input = ""
-		possible_moves = @character.location.available_moves
-		until possible_moves.include?(user_input)
+		until @allowed_values.include?(user_input)
 			puts "Sorry. You can't go this way" if user_input != ""
-			user_input = gets.chomp.upcase	
+			user_input = gets.chomp	
 		end
 		user_input
 	end
 
 	def apply_action(user_input)
-		new_room = get_new_room(user_input, @character.location)
-		@character.move(new_room)
+		action = select_action(user_input)
+		# action.valid?
+		make_action(action, user_input)
+		
+	end
+	def select_action(user_input)
+		case user_input
+		when %w(N E S W).include?(user_input)	
+			"move"
+		when "sing"
+			"sing"
+		end
+	end
+	def make_action(action, user_input)
+		if action == "sing"
+			@character.sing
+		elsif action == "move"
+			new_room = get_new_room(user_input, @character.location)
+			@character.move(new_room)
+		end
 	end
 
 	def get_new_room (user_input, current_room)
@@ -66,6 +85,10 @@ class Character
 	
 	def move (new_room)
 		@location = new_room
+	end
+
+	def sing
+		puts "LALALALA"
 	end
 
 end
