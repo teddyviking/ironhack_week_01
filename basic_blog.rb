@@ -1,4 +1,5 @@
 require 'pry'
+require 'colorize'
 
 class Blog
 	attr_accessor :posts
@@ -37,8 +38,17 @@ class Blog
 			puts post.text
 			puts '--------------------'
 		end
-		pages = @posts.map{|page| @posts.index(page) + 1}.join(' ')
-		puts "Pages: #{pages}"
+		pages = @posts.map{|page| @posts.index(page) + 1}
+		pages.map! do |page| 
+			page = page.to_s
+			if page == (@current_page + 1).to_s
+				page = page.colorize(:blue)
+			else
+				page
+			end
+			
+		end
+		puts "Pages: " + pages.join(' ')
 	end
 
 	def advance_page
@@ -86,7 +96,8 @@ post4.text = "I'm not creating more posts"
 
 
 blog.publish_front_page(post1, post2, post3, post4)
-binding.pry
+blog.advance_page
+blog.publish_front_page(post1, post2, post3, post4)
 
 
 puts "THE END"
