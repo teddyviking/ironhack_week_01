@@ -1,0 +1,9 @@
+Iron Blog
+	*estado: completado
+	*tiempo: alrededor de 4 horas
+	*notas: Las dos primeras partes sin problema(2 horas). Bonus más complicado pero sacable con paciencia y pensando.
+
+Game of rooms
+	*estado: primer apartado completado (1/5)
+	*tiempo: 
+		-1er apartado: 4 horas
