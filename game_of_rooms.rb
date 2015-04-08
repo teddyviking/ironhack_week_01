@@ -6,7 +6,7 @@ class Game
 
 	def initialize(*rooms)
 		@rooms ={}
-		@allowed_values = %w(N E S W sing quit)
+		@allowed_values = []
 		@win_condition = false
 
 		rooms.each do |room|
@@ -17,6 +17,7 @@ class Game
 
 	def init_game
 		create_character
+		set_allowed_values
 		until @win_condition == true
 			display_current_location
 			apply_action(get_user_input)
@@ -54,28 +55,32 @@ class Game
 	end
 	def select_action(user_input)
 		case user_input
-		when "N" || "E" || "S" || "W"	
+		when "N"
 			return "move"
-		when "sing"
-			return "sing"
-		when "quit"
+		when "E"
+			return "move"
+		when "S"
+			return "move"
+		when "W"	
+			return "move"
+		when "SING"
+			return "SING"
+		when "QUIT"
 			puts "You have left the game"
 			exit
 		end
 	end
 	def make_action(action, user_input)
-		p action
-		if action == "sing"
+		if action == "SING"
 			@character.sing(@character.location)
 		elsif action == "move"
 			new_room = get_new_room(user_input, @character.location)
 			@character.move(new_room)
-			# set_new_allowed_values
+			set_allowed_values
 		end
 	end
 
 	def get_new_room (user_input, current_room)
-		
 		new_location = current_room.location
 		case user_input
 		when "N"	 
@@ -93,10 +98,13 @@ class Game
 		return new_room.to_a[0][1]
 	end
 
-	# def set_new_allowed_values
-	# 	@allowed_values = []
-		
-	# end
+	def set_allowed_values
+		@allowed_values = []
+		@character.location.responses_to_actions.each do |key, value|
+			@allowed_values << key.to_s.upcase
+		end
+		p @allowed_values
+	end
 end
 
 class Character
@@ -104,8 +112,7 @@ class Character
 
 	def initialize(room)
 		@name = "Pedro"
-		@location = room
-		
+		@location = room	
 	end
 
 	
@@ -122,12 +129,19 @@ end
 class Room
 	attr_reader :description, :name, :location, :available_moves, :responses_to_actions
 
-	def initialize(name="Kitchen", x=2, y=1, description="You are in ", available_moves=["N","E"] )
+	def initialize(name="Kitchen", x=2, y=1, description="You are in ")
 		@name = name
 		@description = description + @name
-		@available_moves = available_moves
-		@responses_to_actions = {sing: "Some windows break because of your dreadful voice"}
+		@responses_to_actions = {
+			quit: "exit",
+			n: "You go north",
+			e: "You go east",
+			sing: "Some windows break because of your dreadful voice"}
 		@location ={x: x, y: y}
+	end
+
+	def add_response_to_actions
+		
 	end
 	
 
