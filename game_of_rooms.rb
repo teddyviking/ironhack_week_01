@@ -38,7 +38,7 @@ class Game
 		user_input = ""
 		until @allowed_values.include?(user_input)
 			puts "Sorry. You can't do this" if user_input != ""
-			user_input = gets.chomp	
+			user_input = gets.chomp.downcase.to_sym	
 		end
 		user_input
 	end
@@ -55,25 +55,30 @@ class Game
 	end
 	def select_action(user_input)
 		case user_input
-		when "N"
-			return "move"
-		when "E"
-			return "move"
-		when "S"
-			return "move"
-		when "W"	
-			return "move"
-		when "SING"
-			return "SING"
-		when "QUIT"
+		when :sleep
+			@character.location.responses_to_actions[user_input].call
+		when :n
+			action = @character.location.responses_to_actions[user_input]
+			input = user_input.to_s.upcase
+			p input
+			new_room = get_new_room(input, @character.location)
+			action.call(@character.move(new_room))
+			set_allowed_values
+		when :e
+			action = @character.location.responses_to_actions[user_input]
+			input = user_input.to_s.upcase
+			new_room = get_new_room(input, @character.location)
+			action.call(@character.move(new_room))
+			set_allowed_values
+		when :sing
+			@character.location.responses_to_actions[user_input].call
+		when :quit
 			puts "You have left the game"
 			exit
 		end
 	end
 	def make_action(action, user_input)
-		if action == "SING"
-			@character.sing(@character.location)
-		elsif action == "move"
+		if action == "move"
 			new_room = get_new_room(user_input, @character.location)
 			@character.move(new_room)
 			set_allowed_values
@@ -101,7 +106,7 @@ class Game
 	def set_allowed_values
 		@allowed_values = []
 		@character.location.responses_to_actions.each do |key, value|
-			@allowed_values << key.to_s.upcase
+			@allowed_values << key
 		end
 		p @allowed_values
 	end
@@ -134,16 +139,28 @@ class Room
 		@description = description + @name
 		@responses_to_actions = {
 			quit: "exit",
-			n: "You go north",
-			e: "You go east",
-			sing: "Some windows break because of your dreadful voice"}
+			n: response_to_north,
+			e: response_to_east,
+			sing: response_to_sing,
+			sleep: response_to_sleep
+		}
 		@location ={x: x, y: y}
 	end
 
-	def add_response_to_actions
-		
+	def response_to_sleep
+		proc {puts "ZZZZZZ"}
 	end
-	
+
+	def response_to_sing
+		proc {puts "You sing out loud and some windows break"}
+	end
+
+	def response_to_north
+		lambda {|param| puts param}
+	end
+	def response_to_east
+		lambda {|param| puts param}
+	end
 
 end
 
