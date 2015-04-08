@@ -20,7 +20,7 @@ class Game
 		set_allowed_values
 		until @win_condition == true
 			display_current_location
-			apply_action(get_user_input)
+			apply_action(get_for_input)
 		end
 		get_end_of_game
 	end
@@ -33,14 +33,18 @@ class Game
 		puts @character.location.description
 	end
 
-	def get_user_input
+	def get_for_input
 		puts "a>"
 		user_input = ""
 		until @allowed_values.include?(user_input)
-			puts "Sorry. You can't do this" if user_input != ""
-			user_input = gets.chomp.downcase.to_sym	
+			user_input = ask_user_input(user_input)
 		end
 		user_input
+	end
+
+	def ask_user_input(user_input)
+		puts "Sorry. You can't do this" if user_input != ""
+		return gets.chomp.downcase.to_sym
 	end
 
 	def get_end_of_game
@@ -48,43 +52,32 @@ class Game
 	end
 
 	def apply_action(user_input)
-		action = select_action(user_input)
-		# action.valid?
-		make_action(action, user_input)
-		
+		make_action(user_input)
 	end
-	def select_action(user_input)
+	def make_action(user_input)
+		movements = [:n, :e, :w, :s]
+		if movements.include?(user_input)					
+			input = user_input.to_s.upcase
+			new_room = get_new_room(input, @character.location)
+			get_method_to_call(user_input).call(@character.move(new_room))
+			set_allowed_values
+		end
+
 		case user_input
 		when :sleep
-			@character.location.responses_to_actions[user_input].call
-		when :n
-			action = @character.location.responses_to_actions[user_input]
-			input = user_input.to_s.upcase
-			p input
-			new_room = get_new_room(input, @character.location)
-			action.call(@character.move(new_room))
-			set_allowed_values
-		when :e
-			action = @character.location.responses_to_actions[user_input]
-			input = user_input.to_s.upcase
-			new_room = get_new_room(input, @character.location)
-			action.call(@character.move(new_room))
-			set_allowed_values
+			get_method_to_call(user_input).call		
 		when :sing
-			@character.location.responses_to_actions[user_input].call
+			get_method_to_call(user_input).call		
 		when :quit
 			puts "You have left the game"
 			exit
 		end
 	end
-	def make_action(action, user_input)
-		if action == "move"
-			new_room = get_new_room(user_input, @character.location)
-			@character.move(new_room)
-			set_allowed_values
-		end
+	
+	def get_method_to_call(user_input)
+		@character.location.responses_to_actions[user_input]
 	end
-
+	#this method doesn't belong here
 	def get_new_room (user_input, current_room)
 		new_location = current_room.location
 		case user_input
