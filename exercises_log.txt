@@ -10,4 +10,7 @@ Game of rooms
 		-1er apartado: 7 horas (varias refactorizaciones para ser más solid)
 
 Terminal Keynote
-	*estado: (0/3)
+	*estado: keynote básico terminado (1/3)
+	*tiempo: 2 horas y media aprox
+	*dificultad: fácil si sigues los principios enseñados en clase :P
+	*notas: la gema para medir la pantalla da el tamaño mal. No sabía que había que hacer system('clear')
