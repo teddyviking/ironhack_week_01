@@ -5,10 +5,11 @@ class ShoppingCart
 
 	def initialize
 		@items = Hash.new { |hash, key| hash[key] = 1 }
+
 		
 	end
 	def add(item, *quantity)
-		@items[item] = quantity
+		quantity == [] ? @items[item] : @items[item] = quantity[0]
 
 	end
 
