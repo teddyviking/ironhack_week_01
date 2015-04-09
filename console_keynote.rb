@@ -1,3 +1,5 @@
+require 'pry'
+
 class Keynote
 	attr_reader :slides
 
@@ -25,7 +27,7 @@ end
 class Slide
 	attr_reader :text
 
-	def get_text
+	def get_text(slides)
 		
 	end
 
@@ -34,4 +36,24 @@ class Slide
 	end
 
 end
+
+class SlideCreator
+	def initialize(file)
+		@slides = split_simple_txt(file)
+	end
+
+	def split_simple_txt(file)
+		slides = File.read(file).split(/\n/) - [""]
+		return slides
+	end
+end
+
+ iterminal = SlideCreator.new("keynote.txt")
+
+binding pry
+puts "Frase chorra para que pry funcione"
+
+
+
+
 
