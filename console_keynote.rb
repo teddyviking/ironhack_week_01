@@ -27,6 +27,10 @@ end
 class Slide
 	attr_reader :text
 
+	def initialize(text)
+		@text = text
+	end
+	
 	def get_text(slides)
 		
 	end
@@ -37,18 +41,26 @@ class Slide
 
 end
 
-class SlideCreator
+class SlidesCreator
+	attr_reader :slides
 	def initialize(file)
-		@slides = split_simple_txt(file)
+		@slides = create_slides(file)
+	end
+	def create_slides(file)
+		splitted_text = split_simple_txt(file)
+		slides = []
+		splitted_text.each {|fragment| slides << Slide.new(fragment)}
+		slides
 	end
 
 	def split_simple_txt(file)
-		slides = File.read(file).split(/\n/) - [""]
-		return slides
+		splitted_text = File.read(file).split(/\n/) - [""]
+		return splitted_text
 	end
+
 end
 
- iterminal = SlideCreator.new("keynote.txt")
+ iterminal = SlidesCreator.new("keynote.txt")
 
 binding pry
 puts "Frase chorra para que pry funcione"
