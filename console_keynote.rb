@@ -1,26 +1,42 @@
 require 'pry'
 
 class Keynote
-	attr_reader :slides
+	attr_reader :slides, :current_slide
 
-	def begin_presentation
-		
+	def initialize(slides)
+		@slides = slides
+		@current_slide = 0
 	end
 
-	def get_slides
-		
+	def start_presentation
+		display_slide(0)
+		get_action
 	end
 
-	def select_slide
-		
+	def display_slide(slide_number)
+		puts select_slide(slide_number)
+		@current_slide = slide_number
 	end
 
-	def display_slide
-		
+	def select_slide(slide_number)
+		@slides[slide_number].text
 	end
 
-	def change_slide
-		
+	def get_action
+		input = gets.chomp
+		if input == "next" || "previous"
+			change_slide(input)
+		elsif input == "exit"
+			exit
+		end			
+	end
+
+	def change_slide(input)
+		if input == "next"
+			display_slide(@current_slide + 1)
+		elsif input == "previous"
+			display_slide(@current_slide - 1)
+		end		
 	end
 end
 
@@ -30,10 +46,6 @@ class Slide
 	def initialize(text)
 		@text = text
 	end
-	
-	def get_text(slides)
-		
-	end
 
 	def format_text
 		
@@ -41,7 +53,7 @@ class Slide
 
 end
 
-class SlidesCreator
+class SlidesExtractor
 	attr_reader :slides
 	def initialize(file)
 		@slides = create_slides(file)
@@ -60,9 +72,12 @@ class SlidesCreator
 
 end
 
- iterminal = SlidesCreator.new("keynote.txt")
+keynote = Keynote.new(SlidesExtractor.new("keynote.txt").slides)
 
-binding pry
+keynote.start_presentation
+
+# binding pry
+
 puts "Frase chorra para que pry funcione"
 
 
