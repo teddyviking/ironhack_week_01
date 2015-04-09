@@ -24,18 +24,22 @@ class Keynote
 
 	def get_action
 		input = gets.chomp
-		if input == "next" || "previous"
+		if input == ("next" || "previous")
 			change_slide(input)
+			get_action
 		elsif input == "exit"
 			exit
-		end			
+		end	
+				
 	end
 
 	def change_slide(input)
-		if input == "next"
+		if input == "next" && @current_slide < (@slides.size - 1)
 			display_slide(@current_slide + 1)
-		elsif input == "previous"
+		elsif input == "previous" && @current_slide > 0
 			display_slide(@current_slide - 1)
+		elsif input == "next" && @current_slide == (@slides.size - 1)
+			exit			
 		end		
 	end
 end
